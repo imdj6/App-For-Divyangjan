@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // import logo from "../../assets/logo.png"
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import {
@@ -8,6 +8,8 @@ import {
   TextInput,
   Text,
   View,
+  Keyboard,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -16,9 +18,19 @@ import { Entypo } from "@expo/vector-icons";
 //import Icon from 'react-native-vector-icons/FontAwesome';
 // import { StackScreenProps } from '@react-navigation/stack';
 // import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-// const auth = getAuth();
+// import firebase from "../../config/firebase";
 
 function SignUpScreen({ navigation }) {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  const handleKeyboardShow = () => {
+    setKeyboardVisible(true);
+  };
+
+  const handleKeyboardHide = () => {
+    setKeyboardVisible(false);
+  };
+
   const [value, setValue] = React.useState({
     name: "",
     email: "",
@@ -44,7 +56,7 @@ function SignUpScreen({ navigation }) {
       value.password === "" ||
       value.age == "" ||
       value.name == "" ||
-      value.mode =="" ||
+      value.mode == "" ||
       value.gender == ""
     ) {
       setValue({
@@ -54,20 +66,23 @@ function SignUpScreen({ navigation }) {
       return;
     }
 
-    try {
-      await createUserWithEmailAndPassword(auth, value.email, value.password);
-      navigation.navigate("Sign In");
-    } catch (error) {
-      setValue({
-        ...value,
-        error: error.message,
-      });
-    }
+    // try {
+    //   await firebase.auth().createUserWithEmailAndPassword(value.email, value.password);
+    //   navigation.navigate("Sign In");
+    // } catch (error) {
+    //   setValue({
+    //     ...value,
+    //     error: error.message,
+    //   });
+    // }
   }
 
   return (
-    <View className="w-full h-full  bg-black">
-      <View className="mx-4 mt-10 h-5/6 flex justify-center align-center space-y-6">
+    <KeyboardAvoidingView
+      className="w-full h-full  bg-black"
+      behavior={isKeyboardVisible ? "padding" : "height"}
+    >
+      <View className="mx-4 mt-10 h-5/6 flex justify-center align-center space-y-10">
         {/* <Image source={logo} style={{ width: 100, height: 100, alignSelf: "center" }} /> */}
 
         <View className="space-y-6 my-auto">
@@ -107,6 +122,7 @@ function SignUpScreen({ navigation }) {
                 style={styles.icon}
                 color="black"
               />
+
               <TextInput
                 placeholder="Age"
                 value={value.age}
@@ -151,7 +167,7 @@ function SignUpScreen({ navigation }) {
               searchPlaceholder="Search..."
               value={value.mode}
               onChange={(item) => {
-                setValue({ ...value, mode: item.value});
+                setValue({ ...value, mode: item.value });
               }}
               renderLeftIcon={() => (
                 <Entypo
@@ -193,7 +209,7 @@ function SignUpScreen({ navigation }) {
           </Text>
         </Text>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

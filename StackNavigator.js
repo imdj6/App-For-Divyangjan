@@ -1,8 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ProfileScreen from "./screens/ProfileScreen";
-import HomeScreen from "./screens/HomeScreen";
-import { NavigationContainer } from "@react-navigation/native";
+import ProfileScreen from "./screens/UserScreens/ProfileScreen";
+import HomeScreen from "./screens/UserScreens/HomeScreen";
 
 //icons
 import { AntDesign } from "@expo/vector-icons";
@@ -12,6 +11,9 @@ import LoginScreen from "./screens/AuthScreens/LoginScreen";
 import useAuth from "./hooks/useAuth";
 import MainScreen from "./screens/AuthScreens/MainScreen";
 import SignupScreen from "./screens/AuthScreens/SignupScreen";
+import DataInputScreen from "./screens/UserScreens/DataInputScreen";
+import DemoScreen from "./screens/UserScreens/DemoScreen";
+import AnimationScreen from "./screens/UserScreens/AnimationScreen";
 
 function BottomTabs() {
   const Tab = createBottomTabNavigator();
@@ -37,7 +39,7 @@ function BottomTabs() {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={DataInputScreen}
         options={{
           tabBarLabel: "Home",
           headerShown: false,
@@ -75,11 +77,28 @@ function Navigation() {
   return (
     <Stack.Navigator>
       {user ? (
-        <Stack.Screen
-          name="Main"
-          component={BottomTabs}
-          options={{ headerShown: false }}
-        />
+        <>
+          <Stack.Screen
+            name="Data"
+            component={BottomTabs}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Demo"
+            component={DemoScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Animation"
+            component={AnimationScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Main"
+            component={HomeScreen}
+            options={{ headerShown: false }}
+          />
+        </>
       ) : (
         <>
           <Stack.Screen

@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, Image } from "react-native";
-import { Camera } from "expo-camera";
+import { Camera,CameraType } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
-
+import { LinearGradient } from "expo-linear-gradient";
 export default function HomeScreen({ navigation }) {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [galleryPermission, setGalleryPermission] = useState(null);
   // const [type, setType] = useState(CameraType.back);
   const [camera, setCamera] = useState(null);
+
+  // const [isCameraRunning, setIsCameraRunning] = useState(false);
+
+
   const [imageUri, setImageUri] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
 
@@ -38,7 +42,7 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     permisionFunction();
-  }, []);
+  }, [camera]);
 
   const takePicture = async () => {
     if (camera) {
@@ -63,6 +67,10 @@ export default function HomeScreen({ navigation }) {
   };
 
   return (
+    <LinearGradient
+      colors={["#141e30", "#243b55"]}
+      style={{ flex: 1, borderRadius: 20 }}
+    >
     <View style={styles.container}>
       <View style={styles.cameraContainer}>
         <Camera
@@ -72,13 +80,14 @@ export default function HomeScreen({ navigation }) {
           ratio={"1:1"}
         />
       </View>
-      <View style={{ display:"flex",justifyContent:'space-between',flexDirection:'row',marginTop:15,marginBottom:15 }}>
+      <View style={{ display:"flex",justifyContent:'space-around',flexDirection:'row',marginTop:15,marginBottom:15 }}>
       <Button title={"Take Picture"} style={styles.button} onPress={takePicture} />
       <Button title={"Gallery"} onPress={pickImage} />
       <Button title={"Toggle camera"} onPress={toggleCameraType} />
       </View>
       {imageUri && <Image source={{ uri: imageUri }} style={{ flex:1 }} />}
     </View>
+    </LinearGradient>
   );
 }
 
@@ -88,7 +97,6 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   cameraContainer: {
-    
     flexDirection: "row",
   },
   fixedRatio: {

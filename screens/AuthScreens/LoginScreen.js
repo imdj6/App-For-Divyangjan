@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // import logo from "../../assets/logo.png";
 import { Entypo } from "@expo/vector-icons";
 import {
@@ -9,26 +9,26 @@ import {
   Text,
   View,
 } from "react-native";
-
 // import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 // const auth = getAuth();
 
 function LoginScreen({ navigation }) {
-  const [value, setValue] = React.useState({
+  const [value, setValue] = useState({
     email: "",
     password: "",
     error: "",
   });
 
   async function signIn() {
-    // if (value.email === "" || value.password === "") {
-    //   setValue({
-    //     ...value,
-    //     error: "Email and password are mandatory.",
-    //   });
-    //   return;
-    // }
+    if (value.email === "" || value.password === "") {
+      setValue({
+        ...value,
+        error: "Email and password are mandatory.",
+      });
+      return;
+    }
+
     // try {
     //   await signInWithEmailAndPassword(auth, value.email, value.password);
     // } catch (error) {
@@ -64,7 +64,7 @@ function LoginScreen({ navigation }) {
             </View>
 
             <View className="flex flex-row justify-center align-center rounded-xl px-1 py-1 bg-gray-100 items-center">
-            <Entypo name="lock" size={24} color="black" style={styles.icon}/>
+              <Entypo name="lock" size={24} color="black" style={styles.icon} />
               <TextInput
                 placeholder="Password"
                 className="flex-1 pt-2.5 pr-2.5 pb-2.5 pl-0 text-black"
