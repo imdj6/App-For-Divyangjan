@@ -29,7 +29,7 @@ const DemoScreen = ({ navigation }) => {
       <View className="w-30 mx-6 mb-6">
         <View>
           <Button
-            title="Next"
+            title="Start Recording"
             onPress={() => {
               status.isPlaying ? video.current.pauseAsync():""
               navigation.navigate("Animation");

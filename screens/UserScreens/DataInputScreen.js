@@ -24,9 +24,9 @@ const DataInputScreen = ({navigation}) => {
     >
       <View className="w-3/4 mx-auto my-auto  space-y-24">
         <Text className='text-blue-500 font-bold text-center text-lg'>Please Select A Text To start capturing the video</Text>
-        <View className='flex-row flex-1 items-center bg-gray-100'>
+        <View className=' bg-gray-200'>
           <Dropdown
-            className="rounded-xl px-4 py-6 bg-gray-100 "
+            className="rounded-full  bg-gray-200 p-3"
             iconStyle={{
               justifyContent: "space-between",
               alignItems: "center",
@@ -36,7 +36,7 @@ const DataInputScreen = ({navigation}) => {
             maxHeight={300}
             labelField="label"
             valueField="value"
-            placeholder="Select a word to make video"
+            placeholder="Select a Word to Record"
             searchPlaceholder="Search..."
             value={value.data}
             onChange={(item) => {
@@ -57,7 +57,7 @@ const DataInputScreen = ({navigation}) => {
           <Button
             onPress={()=>{navigation.navigate('Animation')}}
             className="rounded-full"
-            title="Let's Go"
+            title="Start Recording"
             color="blue"
             accessibilityLabel="Learn more about this purple button"
           />
@@ -82,7 +82,7 @@ export default DataInputScreen;
 const styles = StyleSheet.create({
   icon: {
     alignItems: "center",
-    padding: 2,
-    paddingRight: 8,
+    padding: 5,
+    marginRight:10
   },
 });
