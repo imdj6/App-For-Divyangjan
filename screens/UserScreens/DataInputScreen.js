@@ -1,9 +1,27 @@
 import { View, Text, StyleSheet, Button } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Dropdown } from "react-native-element-dropdown";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-const DataInputScreen = ({navigation}) => {
+import {db} from '../../firebase'
+import { collection, addDoc } from "firebase/firestore"; 
+const DataInputScreen = ({ navigation }) => {
+  useEffect( () => {
+    async function fetchData() {
+      try {
+        const docRef = await addDoc(collection(db, "users"), {
+          first: "Ada",
+          last: "Lovelace",
+          born: 1815
+        });
+        console.log("Document written with ID: ", docRef.id);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    }
+    fetchData();
+   
+  });
   const data1 = [
     { label: "Developer Mode", value: "0" },
     { label: "User Mode", value: "1" },
@@ -23,8 +41,10 @@ const DataInputScreen = ({navigation}) => {
       style={{ flex: 1, borderRadius: 20 }}
     >
       <View className="w-3/4 mx-auto my-auto  space-y-24">
-        <Text className='text-blue-500 font-bold text-center text-lg'>Please Select A Text To start capturing the video</Text>
-        <View className=' bg-gray-200'>
+        <Text className="text-blue-500 font-bold text-center text-lg">
+          Please Select A Text To start capturing the video
+        </Text>
+        <View className=" bg-gray-200">
           <Dropdown
             className="rounded-full  bg-gray-200 p-3"
             iconStyle={{
@@ -52,24 +72,32 @@ const DataInputScreen = ({navigation}) => {
             )}
           />
         </View>
-        <View className='space-y-7'>
+        <View className="space-y-7">
           <View>
-          <Button
-            onPress={()=>{navigation.navigate('Animation')}}
-            className="rounded-full"
-            title="Start Recording"
-            color="blue"
-            accessibilityLabel="Learn more about this purple button"
-          />
+            <Button
+              onPress={() => {
+                value.data
+                  ? navigation.navigate("Animation")
+                  : alert("please choose a option to start");
+              }}
+              className="rounded-full"
+              title="Start Recording"
+              color="blue"
+              accessibilityLabel="Learn more about this purple button"
+            />
           </View>
           <View>
-          <Button
-            onPress={()=>{navigation.navigate('Demo')}}
-            className="rounded-full"
-            title="Show me a Demo"
-            color="blue"
-            accessibilityLabel="Learn more about this purple button"
-          />
+            <Button
+              onPress={() => {
+                value.data
+                  ? navigation.navigate("Demo")
+                  : alert("please choose a option to start");
+              }}
+              className="rounded-full"
+              title="Show me a Demo"
+              color="blue"
+              accessibilityLabel="Learn more about this purple button"
+            />
           </View>
         </View>
       </View>
@@ -83,6 +111,6 @@ const styles = StyleSheet.create({
   icon: {
     alignItems: "center",
     padding: 5,
-    marginRight:10
+    marginRight: 10,
   },
 });
