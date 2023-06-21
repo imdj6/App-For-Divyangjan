@@ -9,11 +9,11 @@ import {
   Text,
   View,
 } from "react-native";
-// import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-
-// const auth = getAuth();
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 function LoginScreen({ navigation }) {
+  const auth = getAuth();
+
   const [value, setValue] = useState({
     email: "",
     password: "",
@@ -22,21 +22,18 @@ function LoginScreen({ navigation }) {
 
   async function signIn() {
     if (value.email === "" || value.password === "") {
-      setValue({
-        ...value,
-        error: "Email and password are mandatory.",
-      });
+      alert('please fill the required fields')
       return;
     }
 
-    // try {
-    //   await signInWithEmailAndPassword(auth, value.email, value.password);
-    // } catch (error) {
-    //   setValue({
-    //     ...value,
-    //     error: error.message,
-    //   });
-    // }
+    try {
+      await signInWithEmailAndPassword(auth, value.email, value.password);
+    } catch (error) {
+      setValue({
+        ...value,
+        error: error.message,
+      });
+    }
   }
 
   return (

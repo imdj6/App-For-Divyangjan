@@ -10,11 +10,16 @@ import {
 import { Camera } from "expo-camera";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../firebase";
 import { Video } from "expo-av";
 import { AntDesign } from "@expo/vector-icons";
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 const closeButtonSize = Math.floor(WINDOW_HEIGHT * 0.032);
 const captureSize = Math.floor(WINDOW_HEIGHT * 0.09);
+
+
+import { db } from "../../firebase";
 export default function HomeScreen() {
   //camera permission to allow microphone and camera
   const [hasPermission, setHasPermission] = useState(null);
@@ -25,6 +30,10 @@ export default function HomeScreen() {
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isVideoRecording, setIsVideoRecording] = useState(false);
   const [videoSource, setVideoSource] = useState(null);
+  //uploaded link
+  const [imgUrl, setImgUrl] = useState(null);
+  const [progresspercent, setProgresspercent] = useState(0);
+
   const cameraRef = useRef();
   useEffect(() => {
     (async () => {
@@ -85,10 +94,124 @@ export default function HomeScreen() {
     //   <View style={[styles.closeCross, { transform: [{ rotate: "45deg" }] }]} />
     //   <View
     //     style={[styles.closeCross, { transform: [{ rotate: "-45deg" }] }]}
-    //   />
+    //   />some-child
     // </TouchableOpacity>
     <></>
   );
+
+  //sending video link to drive
+  const handleSubmit = async () => {
+    try {
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          console.log(e);
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", videoSource, true);
+        xhr.send(null);
+      });
+  
+      const storageRef = ref(storage, `${Math.random()}`);
+  
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgresspercent(progress);
+        },
+        (error) => {
+          alert(error);
+        },
+        async () => {
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            setImgUrl(downloadURL);
+            console.log(imgUrl);
+            // db.collection("documents").add({
+            //   files: downloadURL,
+            //   user: "hey",
+            // });
+            // alert("Done");
+            // db.collection("documents").onSnapshot((snapshot) => {
+            //   setData(
+            //     snapshot.docs.map((doc) => ({
+            //       id: doc.id,
+            //       data: doc.data(),
+            //     }))
+            //   );
+            // });
+          } catch (error) {
+            console.error("Error getting download URL:", error);
+          }
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // const handleSubmit = async () => {
+  //   try {
+  //     const blob = await new Promise((resolve, reject) => {
+  //       const xhr = new XMLHttpRequest();
+  //       xhr.onload = function () {
+  //         resolve(xhr.response);
+  //       };
+  //       xhr.onerror = function (e) {
+  //         console.log(e);
+  //         reject(new TypeError("Network request failed"));
+  //       };
+  //       xhr.responseType = "blob";
+  //       xhr.open("GET", videoSource, true);
+  //       xhr.send(null);
+  //     });
+  //     //   const uploadTask = uploadBytesResumable(storageRef, blob);
+
+  //     // TODO: UUID @some-child
+  //     const storageRef = ref(storage, `${Math.random(100)}`);
+
+  //     const uploadTask = uploadBytesResumable(storageRef, blob).then((snapshot) => {
+  //       const progress = Math.round(
+  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+  //       );
+  //       setProgresspercent(progress);
+  //       console.log(progresspercent);
+  //     },
+  //     (error) => {
+  //       alert(error);
+  //     },
+  //     async (snapshot) => {
+  //       console.log('started getting donwload file')
+  //       const downloadURL = await getDownloadURL(snapshot.ref);
+  //       console.log(downloadURL);
+  //       setImgUrl(downloadURL);
+  //       db.collection("documents").add({
+  //         files: downloadURL,
+  //         user: "hey",
+  //       });
+  //       alert("Done");
+  //       db.collection("documents").onSnapshot((snapshot) => {
+  //         setData(
+  //           snapshot.docs.map((doc) => ({
+  //             id: doc.id,
+  //             data: doc.data(),
+  //           }))
+  //         );
+  //       });
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
   const renderVideoPlayer = () => (
     <LinearGradient
       colors={["#141e30", "#243b55"]}
@@ -111,7 +234,12 @@ export default function HomeScreen() {
       <View className="bg-black p-5 rounded-xl z-50  opacity-50">
         <View className="flex-row space-x-3 bg-blue-500 justify-center rounded-full p-3 items-center">
           <Text className="text-2xl text-white">Submit</Text>
-          <AntDesign name="checkcircle" size={28} color="white" />
+          <AntDesign
+            name="checkcircle"
+            size={28}
+            color="white"
+            onPress={handleSubmit}
+          />
         </View>
       </View>
     </LinearGradient>

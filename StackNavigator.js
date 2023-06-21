@@ -8,7 +8,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import LoginScreen from "./screens/AuthScreens/LoginScreen";
-import useAuth from "./hooks/useAuth";
+import useAuth  from "./hooks/useAuth";
 import MainScreen from "./screens/AuthScreens/MainScreen";
 import SignupScreen from "./screens/AuthScreens/SignupScreen";
 import DataInputScreen from "./screens/UserScreens/DataInputScreen";
@@ -73,7 +73,7 @@ function BottomTabs() {
 const Stack = createNativeStackNavigator();
 
 function Navigation() {
-  const user = useAuth().user;
+  const { user } = useAuth().user;
   return (
     <Stack.Navigator>
       {user ? (

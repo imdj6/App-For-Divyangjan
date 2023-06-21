@@ -6,14 +6,14 @@ const AuthContext = createContext({});
 // const auth=getAuth();
 
 export const AuthProvider = ({ children }) => {
-  const signInWithGoogle = () => {
-    console.log("button is clicked");
+  const signInWithGoogle = (email,password,name) => {
+    console.log(email,password,name);
   };
 
   return (
     <AuthContext.Provider
       value={{
-        user:true
+        user:false
         ,
         signInWithGoogle,
       }}

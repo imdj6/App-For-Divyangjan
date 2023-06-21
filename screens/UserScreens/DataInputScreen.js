@@ -6,22 +6,22 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {db} from '../../firebase'
 import { collection, addDoc } from "firebase/firestore"; 
 const DataInputScreen = ({ navigation }) => {
-  useEffect( () => {
-    async function fetchData() {
-      try {
-        const docRef = await addDoc(collection(db, "users"), {
-          first: "Ada",
-          last: "Lovelace",
-          born: 1815
-        });
-        console.log("Document written with ID: ", docRef.id);
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }
-    }
-    fetchData();
+  // useEffect( () => {
+  //   async function fetchData() {
+  //     try {
+  //       const docRef = await addDoc(collection(db, "users"), {
+  //         first: "Ada",
+  //         last: "Lovelace",
+  //         born: 1815
+  //       });
+  //       console.log("Document written with ID: ", docRef.id);
+  //     } catch (e) {
+  //       console.error("Error adding document: ", e);
+  //     }
+  //   }
+  //   fetchData();
    
-  });
+  // });
   const data1 = [
     { label: "Developer Mode", value: "0" },
     { label: "User Mode", value: "1" },

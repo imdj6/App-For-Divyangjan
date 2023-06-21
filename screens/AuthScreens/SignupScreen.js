@@ -15,12 +15,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Dropdown } from "react-native-element-dropdown";
 import { Entypo } from "@expo/vector-icons";
+import useAuth from "../../hooks/useAuth";
 //import Icon from 'react-native-vector-icons/FontAwesome';
 // import { StackScreenProps } from '@react-navigation/stack';
-// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-// import firebase from "../../config/firebase";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 function SignUpScreen({ navigation }) {
+  const auth = getAuth();
+
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   const handleKeyboardShow = () => {
@@ -59,22 +63,43 @@ function SignUpScreen({ navigation }) {
       value.mode == "" ||
       value.gender == ""
     ) {
-      setValue({
-        ...value,
-        error: "Please Select all the required values",
-      });
+      alert("please fill the required fields");
       return;
     }
-
-    // try {
-    //   await firebase.auth().createUserWithEmailAndPassword(value.email, value.password);
-    //   navigation.navigate("Sign In");
-    // } catch (error) {
-    //   setValue({
-    //     ...value,
-    //     error: error.message,
-    //   });
-    // }
+    try {
+      await createUserWithEmailAndPassword(
+        auth,
+        value.email,
+        value.password
+      ).then(async (authUser) => {
+        // authUser.user.updateProfile({displayName: value.name,photoURL:"https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png"});
+        try {
+          const docRef = await addDoc(collection(db, "users"), {
+            id: authUser.user.uid,
+            name: value.name,
+            age: value.age,
+            email: value.email,
+            mode: value.mode,
+            gender: value.gender,
+          });
+          setValue({
+            ...value,
+            name: "",
+            email: "",
+            password: "",
+            age: "",
+            gender: "",
+            mode: "",
+          });
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+      });
+      navigation.navigate("Login");
+    } catch (error) {
+      console.log(error);
+      alert(error);
+    }
   }
 
   return (
@@ -190,11 +215,11 @@ function SignUpScreen({ navigation }) {
             </View>
           </View>
 
-          <Pressable className="bg-background border border-white rounded-3xl py-2 px-4 m-4">
-            <Text
-              className="text-center text-white font-bold text-base"
-              onPress={signUp}
-            >
+          <Pressable
+            className="bg-background border border-white rounded-3xl py-2 px-4 m-4"
+            onPress={signUp}
+          >
+            <Text className="text-center text-white font-bold text-base">
               Sign Up
             </Text>
           </Pressable>
