@@ -1,21 +1,31 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-
 const AuthContext = createContext({});
 
-// const auth=getAuth();
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export const AuthProvider = ({ children }) => {
-  const signInWithGoogle = (email,password,name) => {
-    console.log(email,password,name);
-  };
+  const [user, setUser] = useState(false);
+  const auth = getAuth();
+  useEffect(() => {
+    const unsubscribeFromAuthStateChanged = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        setUser(user);
+      } else {
+        // User is signed out
+        setUser(undefined);
+      }
+    });
+
+    return unsubscribeFromAuthStateChanged;
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        user:false
-        ,
-        signInWithGoogle,
+        user: user
       }}
     >
       {children}

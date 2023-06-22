@@ -73,7 +73,7 @@ function BottomTabs() {
 const Stack = createNativeStackNavigator();
 
 function Navigation() {
-  const { user } = useAuth().user;
+  const { user } = useAuth();
   return (
     <Stack.Navigator>
       {user ? (

@@ -91,11 +91,12 @@ function SignUpScreen({ navigation }) {
             gender: "",
             mode: "",
           });
+          navigation.navigate("Login")
         } catch (e) {
           console.error("Error adding document: ", e);
         }
       });
-      navigation.navigate("Login");
+     
     } catch (error) {
       console.log(error);
       alert(error);

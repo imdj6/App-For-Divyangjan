@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
+
 function LoginScreen({ navigation }) {
   const auth = getAuth();
 
@@ -27,12 +28,9 @@ function LoginScreen({ navigation }) {
     }
 
     try {
-      await signInWithEmailAndPassword(auth, value.email, value.password);
+      await signInWithEmailAndPassword(auth, value.email, value.password)
     } catch (error) {
-      setValue({
-        ...value,
-        error: error.message,
-      });
+      alert(error);
     }
   }
 
