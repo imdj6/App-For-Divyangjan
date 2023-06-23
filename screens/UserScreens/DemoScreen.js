@@ -3,11 +3,12 @@ import React from "react";
 import { Video, ResizeMode } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 
-const DemoScreen = ({ navigation }) => {
+const DemoScreen = ({ navigation, route }) => {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [isMuted, setIsMuted] = React.useState(true);
   const video = React.useRef(null);
   const [status, setStatus] = React.useState({});
+  const { url } = route.params;
   return (
     <LinearGradient
       colors={["#141e30", "#243b55"]}
@@ -15,7 +16,7 @@ const DemoScreen = ({ navigation }) => {
     >
       <Video
         source={{
-          uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+          uri:url?url:alert('video is not available'),
         }}
         paused={true}
         shouldPlay
@@ -31,7 +32,7 @@ const DemoScreen = ({ navigation }) => {
           <Button
             title="Start Recording"
             onPress={() => {
-              status.isPlaying ? video.current.pauseAsync():""
+              status.isPlaying ? video.current.pauseAsync() : "";
               navigation.navigate("Animation");
             }}
           />

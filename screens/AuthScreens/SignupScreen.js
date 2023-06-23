@@ -18,7 +18,11 @@ import { Entypo } from "@expo/vector-icons";
 import useAuth from "../../hooks/useAuth";
 //import Icon from 'react-native-vector-icons/FontAwesome';
 // import { StackScreenProps } from '@react-navigation/stack';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 
@@ -67,36 +71,44 @@ function SignUpScreen({ navigation }) {
       return;
     }
     try {
-      await createUserWithEmailAndPassword(
-        auth,
-        value.email,
-        value.password
-      ).then(async (authUser) => {
-        // authUser.user.updateProfile({displayName: value.name,photoURL:"https://cencup.com/wp-content/uploads/2019/07/avatar-placeholder.png"});
-        try {
-          const docRef = await addDoc(collection(db, "users"), {
-            id: authUser.user.uid,
-            name: value.name,
-            age: value.age,
-            email: value.email,
-            mode: value.mode,
-            gender: value.gender,
-          });
-          setValue({
-            ...value,
-            name: "",
-            email: "",
-            password: "",
-            age: "",
-            gender: "",
-            mode: "",
-          });
-          navigation.navigate("Login")
-        } catch (e) {
-          console.error("Error adding document: ", e);
-        }
-      });
-     
+      await createUserWithEmailAndPassword(auth, value.email, value.password)
+        .then(async (authUser) => {
+          try {
+            const docRef = await addDoc(collection(db, "users"), {
+              id: authUser.user.uid,
+              name: value.name,
+              age: value.age,
+              email: value.email,
+              mode: value.mode,
+              gender: value.gender,
+            });
+            setValue({
+              ...value,
+              name: "",
+              email: "",
+              password: "",
+              age: "",
+              gender: "",
+              mode: "",
+            });
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }
+        })
+        .then(async (authUser) => {
+          try {
+            updateProfile(auth.currentUser, {
+              displayName: value.name,
+              photoURL:
+                "https://img.freepik.com/free-icon/priest_318-211734.jpg?size=626&ext=jpg",
+            }).catch((error) => {
+              console.log(error);
+            });
+            alert('you have been logined');
+          } catch (error) {
+            console.log(error);
+          }
+        });
     } catch (error) {
       console.log(error);
       alert(error);

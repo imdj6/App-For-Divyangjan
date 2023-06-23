@@ -1,37 +1,29 @@
 import { View, Text, StyleSheet, Button } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Dropdown } from "react-native-element-dropdown";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import {db} from '../../firebase'
-import { collection, addDoc } from "firebase/firestore"; 
+import { db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
 const DataInputScreen = ({ navigation }) => {
-  // useEffect( () => {
-  //   async function fetchData() {
-  //     try {
-  //       const docRef = await addDoc(collection(db, "users"), {
-  //         first: "Ada",
-  //         last: "Lovelace",
-  //         born: 1815
-  //       });
-  //       console.log("Document written with ID: ", docRef.id);
-  //     } catch (e) {
-  //       console.error("Error adding document: ", e);
-  //     }
-  //   }
-  //   fetchData();
-   
-  // });
-  const data1 = [
-    { label: "Developer Mode", value: "0" },
-    { label: "User Mode", value: "1" },
-    { label: "Developer Mode", value: "2" },
-    { label: "User Mode", value: "3" },
-    { label: "Developer Mode", value: "4" },
-    { label: "User Mode", value: "5" },
-    { label: "Developer Mode", value: "6" },
-    { label: "User Mode", value: "7" },
-  ];
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "signwords"));
+        const newData = querySnapshot.docs.map((doc) => {
+          const { name, url } = doc.data();
+          return { label: name, value: url };
+        });
+        setData(newData);
+      } catch (error) {
+        console.error("Error fetching data from Firebase: ", error);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array to run the effect only once
   const [value, setValue] = React.useState({
     data: "",
   });
@@ -51,14 +43,14 @@ const DataInputScreen = ({ navigation }) => {
               justifyContent: "space-between",
               alignItems: "center",
             }}
-            data={data1}
+            data={data}
             search
             maxHeight={300}
             labelField="label"
             valueField="value"
             placeholder="Select a Word to Record"
             searchPlaceholder="Search..."
-            value={value.data}
+            value={value.url}
             onChange={(item) => {
               setValue({ ...value, data: item.value });
             }}
@@ -90,7 +82,9 @@ const DataInputScreen = ({ navigation }) => {
             <Button
               onPress={() => {
                 value.data
-                  ? navigation.navigate("Demo")
+                  ? navigation.navigate("Demo", {
+                    url: value.data
+                  })
                   : alert("please choose a option to start");
               }}
               className="rounded-full"

@@ -18,18 +18,8 @@ const ProfileScreen = () => {
   const [userData, setUserData] = useState();
   useEffect(() => {
     if (user !== null) {
-      // The user object has basic properties such as display name, email, etc.
-      // const displayName = user.displayName;
-      // const email = user.email;
-      // const photoURL = user.photoURL;
-      // const emailVerified = user.emailVerified;
-
+      //user contains information such as photourl displayname last login uid and authtoken
       setUserData(user);
-
-      // The user's ID, unique to the Firebase project. Do NOT use
-      // this value to authenticate with your backend server, if
-      // you have one. Use User.getToken() instead.
-      const uid = user.uid;
     }
   }, []);
   return (
@@ -38,7 +28,7 @@ const ProfileScreen = () => {
       style={{ flex: 1, borderRadius: 20 }}
     >
       <View className="mt-10 p-5">
-        <Text className="text-white text-2xl">Profile Screen</Text>
+        <Text className="text-white text-2xl">Profile</Text>
       </View>
 
       <View className=" p-5 m-2 bg-blue-500 rounded-3xl mt-2 flex-row items-center justify-between">
@@ -46,24 +36,21 @@ const ProfileScreen = () => {
           <View>
             <Image
               source={{
-                uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-Y3xGA-xeTqioR6RSXK-0b1YN2XpGJviHhA",
+                uri: user.photoURL?user.photoURL:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-Y3xGA-xeTqioR6RSXK-0b1YN2XpGJviHhA",
               }}
               style={{ width: 60, height: 60 }}
               className="rounded-full object-contain"
             />
           </View>
           <View className="flex space-y-1">
-            <Text className="text-lg">{user.displayName?user.displayName:"Danish Jamal"}</Text>
-            <Text className="text-xs">{user.email}</Text>
+            <Text className="text-lg text-white">{user.displayName?user.displayName:"Danish Jamal"}</Text>
+            <Text className="text-xs text-white">{user.email}</Text>
           </View>
         </View>
       </View>
 
       <View className="grid gap-3 space-y-9 p-3 m-1 ">
         {/* {Calling the button by passing props} */}
-        <UserBoxes buttonText="History" icon={BookOpenIcon}/>
-        <UserBoxes buttonText="Friends" icon={UserGroupIcon}/>
-        <UserBoxes buttonText="Block User" icon={LockClosedIcon}/>
         <UserBoxes buttonText="Settings" icon={WrenchScrewdriverIcon}/>
         <UserBoxes buttonText="Legal" icon={ScaleIcon}/>
         <UserBoxes buttonText="Logout" press={()=>{

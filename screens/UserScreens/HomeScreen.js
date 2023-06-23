@@ -18,6 +18,8 @@ const WINDOW_HEIGHT = Dimensions.get("window").height;
 const closeButtonSize = Math.floor(WINDOW_HEIGHT * 0.032);
 const captureSize = Math.floor(WINDOW_HEIGHT * 0.09);
 
+import { getAuth } from "firebase/auth";
+import { doc, setDoc, updateDoc } from "firebase/firestore"; 
 
 import { db } from "../../firebase";
 export default function HomeScreen() {
@@ -41,6 +43,25 @@ export default function HomeScreen() {
       const { status2 } = await Camera.requestMicrophonePermissionsAsync();
       setHasPermission(status === "granted" || status2 === "granted");
     })();
+  }, []);
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    if (user !== null) {
+      // The user object has basic properties such as display name, email, etc.
+      // const displayName = user.displayName;
+      // const email = user.email;
+      // const photoURL = user.photoURL;
+      // const emailVerified = user.emailVerified;
+
+      setUserData(user);
+
+      // The user's ID, unique to the Firebase project. Do NOT use
+      // this value to authenticate with your backend server, if
+      // you have one. Use User.getToken() instead.
+    }
   }, []);
   const onCameraReady = () => {
     setIsCameraReady(true);
@@ -116,7 +137,7 @@ export default function HomeScreen() {
         xhr.send(null);
       });
   
-      const storageRef = ref(storage, `${Math.random()}`);
+      const storageRef = ref(storage, `${user.uid+Math.random(5)}`);
   
       const uploadTask = uploadBytesResumable(storageRef, blob);
       uploadTask.on(
@@ -135,6 +156,10 @@ export default function HomeScreen() {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             setImgUrl(downloadURL);
             console.log(imgUrl);
+            const frankDocRef = doc(db, "users", user.uid);
+            await updateDoc(frankDocRef, {
+              "video":imgUrl,
+            })
             // db.collection("documents").add({
             //   files: downloadURL,
             //   user: "hey",

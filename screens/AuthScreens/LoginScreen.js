@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
-
 function LoginScreen({ navigation }) {
   const auth = getAuth();
 
@@ -23,12 +22,12 @@ function LoginScreen({ navigation }) {
 
   async function signIn() {
     if (value.email === "" || value.password === "") {
-      alert('please fill the required fields')
+      alert("please fill the required fields");
       return;
     }
 
     try {
-      await signInWithEmailAndPassword(auth, value.email, value.password)
+      await signInWithEmailAndPassword(auth, value.email, value.password);
     } catch (error) {
       alert(error);
     }
