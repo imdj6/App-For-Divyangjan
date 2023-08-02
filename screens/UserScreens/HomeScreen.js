@@ -50,18 +50,9 @@ export default function HomeScreen() {
   const [userData, setUserData] = useState();
   useEffect(() => {
     if (user !== null) {
-      // The user object has basic properties such as display name, email, etc.
-      // const displayName = user.displayName;
-      // const email = user.email;
-      // const photoURL = user.photoURL;
-      // const emailVerified = user.emailVerified;
-
       setUserData(user);
-
-      // The user's ID, unique to the Firebase project. Do NOT use
-      // this value to authenticate with your backend server, if
-      // you have one. Use User.getToken() instead.
     }
+    console.log(user);
   }, []);
   const onCameraReady = () => {
     setIsCameraReady(true);
