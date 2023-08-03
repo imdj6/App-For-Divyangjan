@@ -8,7 +8,7 @@ const DemoScreen = ({ navigation, route }) => {
   const [isMuted, setIsMuted] = React.useState(true);
   const video = React.useRef(null);
   const [status, setStatus] = React.useState({});
-  const { url } = route.params;
+  const { url, name } = route.params;
   return (
     <LinearGradient
       colors={["#141e30", "#243b55"]}
@@ -16,7 +16,7 @@ const DemoScreen = ({ navigation, route }) => {
     >
       <Video
         source={{
-          uri:url?url:alert('video is not available'),
+          uri: url ? url : alert("video is not available"),
         }}
         paused={true}
         shouldPlay
@@ -33,7 +33,9 @@ const DemoScreen = ({ navigation, route }) => {
             title="Start Recording"
             onPress={() => {
               status.isPlaying ? video.current.pauseAsync() : "";
-              navigation.navigate("Animation");
+              navigation.navigate("Animation", {
+                name
+              });
             }}
           />
         </View>

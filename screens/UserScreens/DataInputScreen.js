@@ -52,7 +52,7 @@ const DataInputScreen = ({ navigation }) => {
             searchPlaceholder="Search..."
             value={value.url}
             onChange={(item) => {
-              setValue({ ...value, data: item.value });
+              setValue({ ...value, data: item.value, name: item.label });
             }}
             renderLeftIcon={() => (
               <MaterialCommunityIcons
@@ -69,7 +69,9 @@ const DataInputScreen = ({ navigation }) => {
             <Button
               onPress={() => {
                 value.data
-                  ? navigation.navigate("Animation")
+                  ? navigation.navigate("Animation", {
+                      name: value.name,
+                    })
                   : alert("please choose a option to start");
               }}
               className="rounded-full"
@@ -83,8 +85,9 @@ const DataInputScreen = ({ navigation }) => {
               onPress={() => {
                 value.data
                   ? navigation.navigate("Demo", {
-                    url: value.data
-                  })
+                      url: value.data,
+                      name: value.name,
+                    })
                   : alert("please choose a option to start");
               }}
               className="rounded-full"

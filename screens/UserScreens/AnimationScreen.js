@@ -2,13 +2,16 @@ import { View, Text } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-const AnimationScreen = ({navigation}) => {
+const AnimationScreen = ({ navigation, route }) => {
+  const { name } = route.params;
   return (
     <LinearGradient
       colors={["#141e30", "#243b55"]}
       style={{ flex: 1, borderRadius: 20 }}
     >
-        <Text className='text-white text-center my-auto text-xl text-bold '>Recording will start after the timer Stops</Text>
+      <Text className="text-white text-center my-auto text-xl text-bold ">
+        Recording will start after the timer Stops
+      </Text>
       <View className="mx-auto my-auto">
         <CountdownCircleTimer
           isPlaying
@@ -17,10 +20,12 @@ const AnimationScreen = ({navigation}) => {
           colorsTime={[7, 5, 2, 0]}
           className="mx-auto my-auto"
           onComplete={() => {
-            navigation.navigate('Main')
+            navigation.navigate("Main",{name});
           }}
         >
-          {({ remainingTime }) => <Text className='text-blue-500 text-4xl'>{remainingTime}</Text>}
+          {({ remainingTime }) => (
+            <Text className="text-blue-500 text-4xl">{remainingTime}</Text>
+          )}
         </CountdownCircleTimer>
       </View>
     </LinearGradient>

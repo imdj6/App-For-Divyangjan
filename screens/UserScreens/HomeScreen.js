@@ -19,10 +19,11 @@ const closeButtonSize = Math.floor(WINDOW_HEIGHT * 0.032);
 const captureSize = Math.floor(WINDOW_HEIGHT * 0.09);
 
 import { getAuth } from "firebase/auth";
-import { doc, setDoc, updateDoc } from "firebase/firestore"; 
+import {  updateDoc , doc, getDoc, setDoc, arrayUnion} from "firebase/firestore";
 
 import { db } from "../../firebase";
-export default function HomeScreen() {
+export default function HomeScreen({ route,navigation }) {
+  const { name } = route.params;
   //camera permission to allow microphone and camera
   const [hasPermission, setHasPermission] = useState(null);
   //camera type either back camera or front camera
@@ -35,7 +36,7 @@ export default function HomeScreen() {
   //uploaded link
   const [imgUrl, setImgUrl] = useState(null);
   const [progresspercent, setProgresspercent] = useState(0);
-
+  const signwords=name;
   const cameraRef = useRef();
   useEffect(() => {
     (async () => {
@@ -52,7 +53,6 @@ export default function HomeScreen() {
     if (user !== null) {
       setUserData(user);
     }
-    console.log(user);
   }, []);
   const onCameraReady = () => {
     setIsCameraReady(true);
@@ -114,6 +114,7 @@ export default function HomeScreen() {
   //sending video link to drive
   const handleSubmit = async () => {
     try {
+      alert("started uploading please wait...");
       const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
@@ -127,9 +128,9 @@ export default function HomeScreen() {
         xhr.open("GET", videoSource, true);
         xhr.send(null);
       });
-  
-      const storageRef = ref(storage, `${user.uid+Math.random(5)}`);
-  
+
+      const storageRef = ref(storage, `${user.uid + Math.random(5)}`);
+
       const uploadTask = uploadBytesResumable(storageRef, blob);
       uploadTask.on(
         "state_changed",
@@ -146,24 +147,28 @@ export default function HomeScreen() {
           try {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             setImgUrl(downloadURL);
-            console.log(imgUrl);
-            const frankDocRef = doc(db, "users", user.uid);
-            await updateDoc(frankDocRef, {
-              "video":imgUrl,
-            })
-            // db.collection("documents").add({
-            //   files: downloadURL,
-            //   user: "hey",
-            // });
-            // alert("Done");
-            // db.collection("documents").onSnapshot((snapshot) => {
-            //   setData(
-            //     snapshot.docs.map((doc) => ({
-            //       id: doc.id,
-            //       data: doc.data(),
-            //     }))
-            //   );
-            // });
+            const addDataToFirestore = async () => {
+              try {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                const customDocumentRef = doc(db, "data", user.uid);
+            
+                // Get the current document data
+                const docSnapshot = await getDoc(customDocumentRef);
+                const data = docSnapshot.exists() ? docSnapshot.data() : { [signwords]: [] };
+            
+                // Add the new URL to the 'name' array field
+                data[signwords] = arrayUnion(downloadURL);
+            
+                // Update the document with the updated data
+                await setDoc(customDocumentRef, data, { merge: true });
+            
+                alert("Data successfully added to the database,Redirecting to homescreen");
+                navigation.navigate('Data');
+              } catch (error) {
+                console.error("Error adding data to Firestore:", error);
+              }
+            };
+            addDataToFirestore();
           } catch (error) {
             console.error("Error getting download URL:", error);
           }
@@ -173,60 +178,6 @@ export default function HomeScreen() {
       console.error(error);
     }
   };
-
-  // const handleSubmit = async () => {
-  //   try {
-  //     const blob = await new Promise((resolve, reject) => {
-  //       const xhr = new XMLHttpRequest();
-  //       xhr.onload = function () {
-  //         resolve(xhr.response);
-  //       };
-  //       xhr.onerror = function (e) {
-  //         console.log(e);
-  //         reject(new TypeError("Network request failed"));
-  //       };
-  //       xhr.responseType = "blob";
-  //       xhr.open("GET", videoSource, true);
-  //       xhr.send(null);
-  //     });
-  //     //   const uploadTask = uploadBytesResumable(storageRef, blob);
-
-  //     // TODO: UUID @some-child
-  //     const storageRef = ref(storage, `${Math.random(100)}`);
-
-  //     const uploadTask = uploadBytesResumable(storageRef, blob).then((snapshot) => {
-  //       const progress = Math.round(
-  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-  //       );
-  //       setProgresspercent(progress);
-  //       console.log(progresspercent);
-  //     },
-  //     (error) => {
-  //       alert(error);
-  //     },
-  //     async (snapshot) => {
-  //       console.log('started getting donwload file')
-  //       const downloadURL = await getDownloadURL(snapshot.ref);
-  //       console.log(downloadURL);
-  //       setImgUrl(downloadURL);
-  //       db.collection("documents").add({
-  //         files: downloadURL,
-  //         user: "hey",
-  //       });
-  //       alert("Done");
-  //       db.collection("documents").onSnapshot((snapshot) => {
-  //         setData(
-  //           snapshot.docs.map((doc) => ({
-  //             id: doc.id,
-  //             data: doc.data(),
-  //           }))
-  //         );
-  //       });
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   const renderVideoPlayer = () => (
     <LinearGradient
